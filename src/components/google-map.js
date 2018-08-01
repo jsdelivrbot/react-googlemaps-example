@@ -12,9 +12,15 @@ export default class GoogleMap extends Component {
     return false;
   }
 
+  // THis is always executed if new props are received - regardless of what shouldComponentUpdate() returns
+  componentWillReceiveProps(nextProps) {
+    const { lat, lng } = nextProps;
+    this.gmap.panTo({ lat, lng });
+  }
+
   componentDidMount() {
     this.addGoogleMapsScripts(() => {
-      const gmap = new google.maps.Map(this.mapContainer.current, {
+      this.gmap = new google.maps.Map(this.mapContainer.current, {
         center: { lat: this.props.lat, lng: this.props.lng },
         zoom: 8
       });
@@ -34,7 +40,7 @@ export default class GoogleMap extends Component {
       }`
     );
     window.addEventListener('gmapsLoaded', callback);
-    
+
     window.gmapsCallback = () => window.dispatchEvent(new Event('gmapsLoaded'));
 
     document.head.appendChild(maps);
